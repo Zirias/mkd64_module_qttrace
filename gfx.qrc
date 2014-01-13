@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>gfx/blAllocated.png</file>
+        <file>gfx/blFree.png</file>
+        <file>gfx/blReserved.png</file>
+    </qresource>
+</RCC>
