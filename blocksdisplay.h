@@ -23,6 +23,7 @@ public:
     ~BlocksDisplay();
     void addTrack(Track *t);
     void setBlock(int track, int sector, int status);
+    void setStatusMsg(const QString &text);
     
 private:
     int nextTrack;

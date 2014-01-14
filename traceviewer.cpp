@@ -1,11 +1,16 @@
 #include "traceviewer.h"
 
+#include <QMessageBox>
+
 extern "C" {
 #define this self
 #include <mkd64/common.h>
 #include <mkd64/imodule.h>
 #include <mkd64/track.h>
+#include <mkd64/util.h>
 #undef this
+
+#include <stdio.h>
 }
 
 typedef struct
@@ -31,11 +36,32 @@ initImage(IModule *mod, Image *img)
     a->viewer->initImage(img);
 }
 
+static int
+globalOption(IModule *mod, char opt, const char *arg)
+{
+    TraceViewAdapter *a = (TraceViewAdapter *)mod;
+    return a->viewer->globalOption(opt, arg);
+}
+
+static int
+fileOption(IModule *mod, Diskfile *file, char opt, const char *arg)
+{
+    TraceViewAdapter *a = (TraceViewAdapter *)mod;
+    return a->viewer->fileOption(file, opt, arg);
+}
+
 static void
 statusChanged(IModule *mod, const BlockPosition *pos)
 {
     TraceViewAdapter *a = (TraceViewAdapter *)mod;
     a->viewer->statusChanged(pos);
+}
+
+static void
+imageComplete(IModule *mod)
+{
+    TraceViewAdapter *a = (TraceViewAdapter *)mod;
+    a->viewer->imageComplete();
 }
 
 extern "C" {
@@ -54,7 +80,10 @@ instance()
     a->mod.id = &id;
     a->mod.free = &_delete;
     a->mod.initImage = &initImage;
+    a->mod.globalOption = &globalOption;
+    a->mod.fileOption = &fileOption;
     a->mod.statusChanged = &statusChanged;
+    a->mod.imageComplete = &imageComplete;
 
     return (IModule *)a;
 }
@@ -63,9 +92,9 @@ instance()
 static int fakeArgc = 1;
 static char *fakeArgv[] = { "qttrace", NULL };
 
-TraceViewer::TraceViewer() : app(fakeArgc, fakeArgv), display(NULL)
-{
-}
+TraceViewer::TraceViewer() : app(fakeArgc, fakeArgv),
+    display(NULL), speed(50)
+{ }
 
 void TraceViewer::initImage(Image *img)
 {
@@ -81,6 +110,44 @@ void TraceViewer::initImage(Image *img)
     app.processEvents();
 }
 
+int TraceViewer::globalOption(char opt, const char *arg)
+{
+    if (opt == 's')
+    {
+        if (checkArgAndWarn(opt, arg, 0, 1, _modid))
+        {
+            int intarg;
+            if (tryParseInt(arg, &intarg) && intarg > 0)
+            {
+                speed = intarg;
+            }
+            else
+            {
+                fprintf(stderr, "[qttrace] Warning: invalid speed vaue "
+                        "`%s' ignored.", arg);
+            }
+        }
+        return 1;
+    }
+    return 0;
+}
+
+int TraceViewer::fileOption(Diskfile *file, char opt, const char *arg)
+{
+    if (opt == 'f')
+    {
+        if (arg)
+        {
+            display.setStatusMsg(QString("Writing file: ").append(arg));
+        }
+        else
+        {
+            display.setStatusMsg("<No file>");
+        }
+    }
+    return 0;
+}
+
 void TraceViewer::statusChanged(const BlockPosition *pos)
 {
     BlockStatus s = block_status(image_block(img, pos));
@@ -90,5 +157,12 @@ void TraceViewer::statusChanged(const BlockPosition *pos)
     else display.setBlock(pos->track, pos->sector, 0);
 
     app.processEvents();
-    usleep(200000);
+    usleep(speed*1000);
+}
+
+void TraceViewer::imageComplete()
+{
+    QMessageBox done(QMessageBox::Information, "Image finished",
+                     "Image creation finished.", QMessageBox::Ok, &display);
+    done.exec();
 }

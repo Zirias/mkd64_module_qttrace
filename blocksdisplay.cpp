@@ -60,3 +60,8 @@ void BlocksDisplay::setBlock(int track, int sector, int status)
         l->setPixmap(statusIcons[status]);
     }
 }
+
+void BlocksDisplay::setStatusMsg(const QString &text)
+{
+    ui->statusBar->showMessage(text);
+}
