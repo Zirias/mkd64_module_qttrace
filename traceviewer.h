@@ -26,7 +26,7 @@ public:
     TraceViewer();
     void initImage(Image *img);
     int globalOption(char opt, const char *arg);
-    int fileOption(Diskfile *file, char opt, const char *arg);
+    int fileOption(DiskFile *file, char opt, const char *arg);
     void statusChanged(const BlockPosition *pos);
     void imageComplete();
 };

@@ -34,10 +34,10 @@ void BlocksDisplay::addTrack(Track *t)
     l->setFixedHeight(16);
     l->setText(QString::number(nextTrack+1).append(':'));
     ui->gridLayout->addWidget(l, nextTrack, 0);
-    int numSectors = track_numSectors(t);
+    int numSectors = Track_numSectors(t);
     for (int i = 0; i < numSectors;)
     {
-        BlockStatus s = track_blockStatus(t, i);
+        BlockStatus s = Track_blockStatus(t, i);
         int status = 0;
         if (s & BS_ALLOCATED) status = 2;
         else if (s & BS_RESERVED) status = 1;

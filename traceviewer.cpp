@@ -44,7 +44,7 @@ globalOption(IModule *mod, char opt, const char *arg)
 }
 
 static int
-fileOption(IModule *mod, Diskfile *file, char opt, const char *arg)
+fileOption(IModule *mod, DiskFile *file, char opt, const char *arg)
 {
     TraceViewAdapter *a = (TraceViewAdapter *)mod;
     return a->viewer->fileOption(file, opt, arg);
@@ -102,7 +102,7 @@ void TraceViewer::initImage(Image *img)
 
     int i = 0;
     Track *t;
-    while ((t = image_track(img, ++i)))
+    while ((t = Image_track(img, ++i)))
     {
         display.addTrack(t);
     }
@@ -114,7 +114,7 @@ int TraceViewer::globalOption(char opt, const char *arg)
 {
     if (opt == 's')
     {
-        if (checkArgAndWarn(opt, arg, 0, 1, _modid))
+        if (checkArgAndWarn(opt, arg, 0, 1, id()))
         {
             int intarg;
             if (tryParseInt(arg, &intarg) && intarg > 0)
@@ -132,7 +132,7 @@ int TraceViewer::globalOption(char opt, const char *arg)
     return 0;
 }
 
-int TraceViewer::fileOption(Diskfile *file, char opt, const char *arg)
+int TraceViewer::fileOption(DiskFile *file, char opt, const char *arg)
 {
     if (opt == 'f')
     {
@@ -150,7 +150,7 @@ int TraceViewer::fileOption(Diskfile *file, char opt, const char *arg)
 
 void TraceViewer::statusChanged(const BlockPosition *pos)
 {
-    BlockStatus s = block_status(image_block(img, pos));
+    BlockStatus s = Block_status(Image_block(img, pos));
 
     if (s & BS_ALLOCATED) display.setBlock(pos->track, pos->sector, 2);
     else if (s & BS_RESERVED) display.setBlock(pos->track, pos->sector, 1);
