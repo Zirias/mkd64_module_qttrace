@@ -3,12 +3,7 @@
 
 #include <QMainWindow>
 #include <QPixmap>
-
-extern "C" {
-#define this self
 #include <mkd64/track.h>
-#undef this
-}
 
 namespace Ui {
 class BlocksDisplay;

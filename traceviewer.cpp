@@ -1,17 +1,13 @@
 #include "traceviewer.h"
 
 #include <QMessageBox>
-
-extern "C" {
-#define this self
 #include <mkd64/common.h>
 #include <mkd64/imodule.h>
 #include <mkd64/track.h>
 #include <mkd64/util.h>
-#undef this
-
 #include <stdio.h>
-}
+#include <stdlib.h>
+#include <unistd.h>
 
 typedef struct
 {
@@ -64,10 +60,6 @@ imageComplete(IModule *mod)
     a->viewer->imageComplete();
 }
 
-extern "C" {
-#include <stdlib.h>
-#include <unistd.h>
-
 // static module interface
 
 MKD64_MODULE("qttrace")
@@ -86,7 +78,6 @@ instance()
     a->mod.imageComplete = &imageComplete;
 
     return (IModule *)a;
-}
 }
 
 static int fakeArgc = 1;

@@ -1,14 +1,9 @@
 #ifndef TRACEVIEWER_H
 #define TRACEVIEWER_H
 
-extern "C"
-{
-#define this self
 #include <mkd64/image.h>
 #include <mkd64/block.h>
 #include <mkd64/diskfile.h>
-#undef this
-}
 
 #include "blocksdisplay.h"
 

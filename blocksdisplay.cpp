@@ -2,12 +2,7 @@
 #include "ui_blocksdisplay.h"
 
 #include <QLabel>
-
-extern "C" {
-#define this self
 #include <mkd64/block.h>
-#undef this
-}
 
 BlocksDisplay::BlocksDisplay(QWidget *parent) :
     QMainWindow(parent),
