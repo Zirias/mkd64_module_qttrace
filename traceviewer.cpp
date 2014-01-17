@@ -67,7 +67,7 @@ MKD64_MODULE("qttrace")
 SOEXPORT IModule *
 instance()
 {
-    TraceViewAdapter *a = (TraceViewAdapter *)malloc(sizeof(TraceViewAdapter));
+    TraceViewAdapter *a = (TraceViewAdapter *)calloc(1, sizeof(TraceViewAdapter));
     a->viewer = new TraceViewer();
     a->mod.id = &id;
     a->mod.free = &_delete;
