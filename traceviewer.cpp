@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 typedef struct
 {
@@ -67,7 +68,9 @@ MKD64_MODULE("qttrace")
 SOEXPORT IModule *
 instance()
 {
-    TraceViewAdapter *a = (TraceViewAdapter *)calloc(1, sizeof(TraceViewAdapter));
+    TraceViewAdapter *a = (TraceViewAdapter *)mkd64Alloc(sizeof(TraceViewAdapter));
+    memset(a, 0, sizeof(TraceViewAdapter));
+
     a->viewer = new TraceViewer();
     a->mod.id = &id;
     a->mod.free = &_delete;
@@ -79,6 +82,22 @@ instance()
 
     return (IModule *)a;
 }
+
+SOEXPORT const char *
+help()
+{
+    return
+"qttrace is a debugging and/or gimmick module for mkd64. It shows the progress\n"
+"of the image creation process in a window. If you are using modules providing\n"
+"extra tracks, make sure to load them before qttrace because it will only show\n"
+"tracks available at load time.\n\n"
+"qttrace understands the following options:\n\n"
+"  -s SPEED    the number of milliseconds to wait afer each block status\n"
+"              change. So, the higher you set this value, the slower the\n"
+"              image is created. The default value is 50.\n";
+}
+
+// module implementation
 
 static int fakeArgc = 1;
 static char *fakeArgv[] = { "qttrace", NULL };
